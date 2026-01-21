@@ -1,0 +1,31 @@
+# User-specific files
+IMPLEMENTATION_PLAN.md
+
+# Visual Studio / .NET
+.vs/
+bin/
+obj/
+*.user
+*.suo
+*.userprefs
+[Dd]ebug/
+[Rr]elease/
+*.pdb
+*.dll
+
+# Unity
+[Ll]ibrary/
+[Tt]emp/
+[Oo]bj/
+[Bb]uild/
+[Bb]uilds/
+[Ll]ogs/
+[Mm]emoryCaptures/
+/[Uu]ser[Ss]ettings/
+*.pid
+*.unitypackage
+*.meta
+
+# OS generated
+.DS_Store
+Thumbs.db
