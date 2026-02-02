@@ -1,7 +1,70 @@
 ﻿@page "/"
 
-<PageTitle>Home</PageTitle>
+<PageTitle>Maritima-X Operations</PageTitle>
 
-<h1>Hello, world!</h1>
+<div>
+    <h1 style="font-size: 2.5rem; letter-spacing: -0.02em;">Mission Control</h1>
+    <p style="max-width: 600px; font-size: 1.1rem;">
+        Welcome to the Maritima-X Integrated Operations Center. This dashboard provides real-time visibility into the development and operational status of the Maritime Digital Twin ecosystem.
+    </p>
 
-Welcome to your new app.
+    <!-- Top Stats Row -->
+    <div class="dashboard-grid">
+        <div class="card">
+            <div class="card-header">System Status</div>
+            <div class="card-value">
+                Online <span style="font-size: 1rem; color: #34d399;">●</span>
+            </div>
+            <p>Core services operational</p>
+        </div>
+        
+        <div class="card">
+            <div class="card-header">Current Phase</div>
+            <div class="card-value">Phase 1</div>
+            <p>Foundation & Integration</p>
+             <div class="progress-container">
+                <div class="progress-bar" style="width: 60%;"></div>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-header">Architecture</div>
+            <div class="card-value">Hybrid</div>
+            <p>.NET Core Host + Unity 6 Viz</p>
+        </div>
+    </div>
+
+    <h2 style="margin-top: 3rem; border-bottom: 1px solid var(--border-color); padding-bottom: 0.5rem;">Development Roadmap</h2>
+    
+    <div class="dashboard-grid" style="grid-template-columns: 1fr;">
+        <!-- Phase 1 -->
+        <div class="card" style="display: flex; justify-content: space-between; align-items: center;">
+            <div>
+                <div class="card-header">Phase 1: The Foundation</div>
+                <h3 style="margin: 0;">WPF Shell & Unity Bridge</h3>
+                <p>Establishing the high-performance IPC link between the .NET logic layer and the Unity rendering engine.</p>
+            </div>
+            <div class="status-pill">IN PROGRESS</div>
+        </div>
+
+        <!-- Phase 2 -->
+        <div class="card" style="display: flex; justify-content: space-between; align-items: center; opacity: 0.7;">
+            <div>
+                <div class="card-header">Phase 2: Core Data Services</div>
+                <h3 style="margin: 0;">Telemetry & Operations</h3>
+                <p>Implementing TimescaleDB ingestion, ASP.NET Core APIs, and the "Command Logic" UI in WPF.</p>
+            </div>
+            <div class="status-pill pending">PENDING</div>
+        </div>
+
+         <!-- Phase 3 -->
+        <div class="card" style="display: flex; justify-content: space-between; align-items: center; opacity: 0.5;">
+            <div>
+                <div class="card-header">Phase 3: Digital Twin</div>
+                <h3 style="margin: 0;">High-Fidelity Visualization</h3>
+                <p>Importing 3D assets, setting up shader graphs for heatmaps, and binding real-time data to visual properties.</p>
+            </div>
+            <div class="status-pill pending">PLANNED</div>
+        </div>
+    </div>
+</div>
