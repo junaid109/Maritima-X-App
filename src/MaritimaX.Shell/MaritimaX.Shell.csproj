@@ -1,5 +1,10 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
+  <ItemGroup>
+    <ProjectReference Include="..\MaritimaX.Core\MaritimaX.Core.csproj" />
+    <ProjectReference Include="..\MaritimaX.UnityBridge\MaritimaX.UnityBridge.csproj" />
+  </ItemGroup>
+
   <PropertyGroup>
     <OutputType>WinExe</OutputType>
     <TargetFramework>net10.0-windows</TargetFramework>

@@ -1,9 +1,10 @@
 using System;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
-using System.Threading;
 using System.Windows;
 using System.Windows.Interop;
+using MaritimaX.UnityBridge;
+using MaritimaX.Core.Models;
 
 namespace MaritimaX.Shell.Controls
 {
@@ -12,6 +13,9 @@ namespace MaritimaX.Shell.Controls
         private Process? _unityProcess;
         private IntPtr _unityWindowHandle = IntPtr.Zero;
         private readonly string _unityProjectPath;
+
+        // The Bridge Service
+        public UnityBridgeServer Bridge { get; private set; }
 
         // P/Invoke constants
         internal const int GWL_STYLE = -16;
@@ -24,19 +28,15 @@ namespace MaritimaX.Shell.Controls
         public UnityHwndHost(string unityProjectPath)
         {
             _unityProjectPath = unityProjectPath;
+            Bridge = new UnityBridgeServer();
+            Bridge.Start(); // Start listening immediately
         }
 
         protected override HandleRef BuildWindowCore(HandleRef hwndParent)
         {
             // 1. Launch Unity Instance
             // We pass -parentHWND <Handle> to tell Unity to dock itself here.
-            // In a real build, we point to the .exe. 
-            // For development, we usually launch the Editor or a Build.
-            // Here we assume a built executable functionality for "Elite" stability.
             
-            // NOTE: In Phase 1 testing, ensure you have a built Unity executable.
-            // For now, we will create a child window handle to reserve the space.
-
             StartUnity(hwndParent.Handle);
 
             return new HandleRef(this, _unityWindowHandle);
@@ -44,12 +44,6 @@ namespace MaritimaX.Shell.Controls
 
         private void StartUnity(IntPtr parentHandle)
         {
-             // For the detailed plan, we start a process. 
-             // Ideally: "MaritimaX.Viz.exe -parentHWND {parentHandle} -nographics ?? no, we want graphics."
-             
-             // Since we don't have the exe yet, we will just stub the handle logic.
-             // In a real implementation, we would Process.Start(...)
-             
              // For this step, to prevent crashing without an EXE, we will create a blank dummy window.
              // But I will include the REAL code commented out for the user.
              
@@ -83,6 +77,7 @@ namespace MaritimaX.Shell.Controls
                 _unityProcess.Kill();
                 _unityProcess.Dispose();
             }
+            Bridge.Dispose();
             DestroyWindow(hwnd.Handle);
         }
         
@@ -94,6 +89,16 @@ namespace MaritimaX.Shell.Controls
                  // Resize Unity window to fit WPF container
                  MoveWindow(_unityWindowHandle, 0, 0, (int)sizeInfo.NewSize.Width, (int)sizeInfo.NewSize.Height, true);
              }
+        }
+
+        public async void SendTestCommand(string msg)
+        {
+            var cmd = new UnityCommand 
+            { 
+                CommandType = "TEST_MSG", 
+                Payload = msg 
+            };
+            await Bridge.SendCommandAsync(cmd);
         }
 
         // P/Invoke
@@ -108,45 +113,5 @@ namespace MaritimaX.Shell.Controls
 
         [DllImport("user32.dll", SetLastError = true)]
         internal static extern bool MoveWindow(IntPtr hwnd, int X, int Y, int nWidth, int nHeight, bool bRepaint);
-
-        // --- IPC / Named Pipes Logic ---
-        private System.IO.Pipes.NamedPipeServerStream? _pipeServer;
-        private System.IO.StreamWriter? _pipeWriter;
-
-        public void InitializePipeServer(string pipeName = "MaritimaX_Pipe")
-        {
-            Thread serverThread = new Thread(() =>
-            {
-                while (true) // Auto-restart server loop
-                {
-                    try
-                    {
-                        using (_pipeServer = new System.IO.Pipes.NamedPipeServerStream(pipeName, System.IO.Pipes.PipeDirection.Out))
-                        {
-                            _pipeServer.WaitForConnection();
-                            using (_pipeWriter = new System.IO.StreamWriter(_pipeServer))
-                            {
-                                _pipeWriter.AutoFlush = true;
-                                // Keep open until broken
-                                while (_pipeServer.IsConnected) { Thread.Sleep(100); }
-                            }
-                        }
-                    }
-                    catch (Exception) { Thread.Sleep(1000); }
-                }
-            });
-            serverThread.IsBackground = true;
-            serverThread.Start();
-        }
-
-        public void SendCommand(string command)
-        {
-            if (_pipeServer != null && _pipeServer.IsConnected && _pipeWriter != null)
-            {
-                try
-                {
-                    _pipeWriter.WriteLine(command);
-                }
-                catch { /* Handle disconnection */ }
-            }
-        }
+    }
+}

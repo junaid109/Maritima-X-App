@@ -8,6 +8,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\MaritimaX.ServiceDefaults\MaritimaX.ServiceDefaults.csproj" />
+    <ProjectReference Include="..\MaritimaX.Core\MaritimaX.Core.csproj" />
   </ItemGroup>
 
   <ItemGroup>
